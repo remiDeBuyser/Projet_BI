@@ -13,5 +13,8 @@ curl_close($ch);
 preg_match_all("/<title>(.*)<\/title>/", $result, $matches);
 print("<p>".$matches[1][0] . "</p>");
 
-preg_match_all("/<span>(.*)<\/span>/", $result, $matches);
-var_dump($matches);
+preg_match("/<div class=\"c-faceplate__price \">(.*)<\/div>/", $result, $matches);
+
+// 181.7300 USD en 181.7300 avec preg_match
+preg_match("/[0-9]+\.[0-9]{4}/", $matches[0], $matches);
+var_dump($matches[0]);
