@@ -15,6 +15,9 @@ print("<p>".$matches[1][0] . "</p>");
 
 preg_match("/<div class=\"c-faceplate__price \">(.*)<\/div>/", $result, $matches);
 
-// 181.7300 USD en 181.7300 avec preg_match
-preg_match("/[0-9]+\.[0-9]{4}/", $matches[0], $matches);
-var_dump($matches[0]);
+// affiche le cours de l'action
+preg_match("/[0-9]+\.[0-9]+/", $matches[0], $matches);
+$actual_price = $matches[0];
+$actual_time = date("Y-m-d H:i:s");
+print("<p>Prix actuel : ".$actual_price."$</p>");
+print("<p>Heure : ".$actual_time."</p>");
