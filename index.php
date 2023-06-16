@@ -30,8 +30,7 @@ preg_match("/<span class=\"c-instrument c-instrument--high\" (.*)<\/span>/", $re
 preg_match("/[0-9]+\.[0-9]{4}/", $matches2[0], $matches2);
 print("+haut : ".$matches2[0]."<br>");
 
-preg_match("/<span class=\"c-instrument c-instrument--totalvolume\"(*.)<\/span>/", $result, $matches2);
-var_dump($matches2);
+preg_match("/<span class=\"c-instrument c-instrument--totalvolume\" (.*)<\/span>/", $result, $matches2);
 preg_match("/[0,9]+/", $matches2[0], $matches2);
 print"total volume : ".($matches2[0]."<br>");
 
