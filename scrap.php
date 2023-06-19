@@ -21,7 +21,7 @@ $serverUrl = 'http://localhost:4444';
 $scriptDirectory = __DIR__;
 
 $isin = "US0378331005";
-
+/*
 $options = new ChromeOptions();
 $prefs = array('download.default_directory' => $scriptDirectory);
 $options->setExperimentalOption('prefs', $prefs);
@@ -95,7 +95,7 @@ $getDate->sendKeys("01011900");
 
 $getFinalSubmit = $driver->findElement(WebDriverBy::xpath('/html/body/main/div/div[1]/div[4]/div[1]/div/div/form/div[11]/div/input'));
 $getFinalSubmit->click();
-
+*/
 
 $file = "SICOVAM_".date("Y-m-d").".txt";
 
@@ -128,5 +128,11 @@ if (($handle = fopen($file, "r")) !== FALSE) {
         if (!$result) {
             echo "Error: " . $sql . "<br>" . $conn->error;
         }
+    }
+    // si pas de soucis on supp le fichier
+    if (unlink($file)) {
+        echo "Le fichier a été supprimé avec succès.";
+    } else {
+        echo "Une erreur s'est produite lors de la suppression du fichier.";
     }
 }
