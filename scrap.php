@@ -8,7 +8,7 @@ use Facebook\WebDriver\Chrome\ChromeOptions;
 
 $serverUrl = 'http://localhost:4444';
 
-$scriptDirectory = __DIR__ + "/docs";
+$scriptDirectory = __DIR__ . "/docs";
 
 $options = new ChromeOptions();
 $prefs = array('download.default_directory' => $scriptDirectory);
