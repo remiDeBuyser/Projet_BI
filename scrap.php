@@ -21,7 +21,6 @@ $serverUrl = 'http://localhost:4444';
 $scriptDirectory = __DIR__;
 
 $isin = "US0378331005";
-/*
 $options = new ChromeOptions();
 $prefs = array('download.default_directory' => $scriptDirectory);
 $options->setExperimentalOption('prefs', $prefs);
@@ -69,7 +68,6 @@ $getSubmitLoginBtn->click();
 // $getProfileButton->click()->wait(3);
 // $driver->get('https://www.boursorama.com/espace-membres/telecharger-cours/international')->wait(5);
 sleep(2);
-print('coucou je suis la');
 $getDownloadsPage = $driver->findElement(WebDriverBy::xpath('/html/body/div[6]/div[3]/div[2]/ol/li[4]/div/div/div[2]/div/ul/li[4]'));
 $getDownloadsPage->click();
 
@@ -93,11 +91,18 @@ $getDate = $driver->findElement(WebDriverBy::xpath('/html/body/main/div/div[1]/d
 $getDate->clear();
 $getDate->sendKeys("01011900");
 
+$getCurrentDate = $driver->findElement(WebDriverBy::xpath('/html/body/main/div/div[1]/div[4]/div[1]/div/div/form/div[6]/div[2]/div/div/input'));
+$getCurrentDate->getAttribute('value');
+
+$tmpCurrentDate = explode("/",$getCurrentDate->getAttribute('value'));
+$formatedCurrentDate = $tmpCurrentDate[2]."-".$tmpCurrentDate[1]."-".$tmpCurrentDate[0];
+print($formatedCurrentDate);
+
+
 $getFinalSubmit = $driver->findElement(WebDriverBy::xpath('/html/body/main/div/div[1]/div[4]/div[1]/div/div/form/div[11]/div/input'));
 $getFinalSubmit->click();
-*/
 
-$file = "SICOVAM_".date("Y-m-d").".txt";
+$file = "SICOVAM_".$formatedCurrentDate.".txt";
 
 $sqlQueryWhere = "SELECT COUNT(*) AS count FROM `Historic` WHERE `date_historic` = '%s' AND `isin` = '%s'";
 $sqlQueryInsert = "INSERT INTO `Historic`(`date_historic`,`opening_price`, `high_price`, `low_price`, `closing_price`, `volume`, `currency`,`isin`) VALUES ('%s', '%s', '%s', '%s', '%s', %d, '%s', '%s')";
