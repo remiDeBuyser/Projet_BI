@@ -6,9 +6,21 @@ use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\Chrome\ChromeOptions;
 
+
+
+try {
+	// On se connecte à MySQL
+	$mysqlClient = new PDO('mysql:host=db4free.net;dbname=coursbi;charset=utf8', 'coursbi', 'mv.G8#GSkLFp');
+} catch(Exception $e) {
+	// En cas d'erreur, on affiche un message et on arrête tout
+        die('Erreur : '.$e->getMessage());
+} 
+
 $serverUrl = 'http://localhost:4444';
 
 $scriptDirectory = __DIR__;
+
+$isin = "US0378331005";
 
 $options = new ChromeOptions();
 $prefs = array('download.default_directory' => $scriptDirectory);
@@ -75,21 +87,46 @@ $getCheckBox->click();
 
 $getIsin = $driver->findElement(WebDriverBy::xpath('/html/body/main/div/div[1]/div[4]/div[1]/div/div/form/div[2]/div/ul/li[3]/div[3]/input'));
 $getIsin->click();
-$getIsin->sendKeys('US0378331005');
+$getIsin->sendKeys($isin);
 
 $getDate = $driver->findElement(WebDriverBy::xpath('/html/body/main/div/div[1]/div[4]/div[1]/div/div/form/div[6]/div[1]/div/div/input'));
 $getDate->clear();
 $getDate->sendKeys("01011900");
-// $getDate->setAttribute("value", "01/01/1900");
-
-
-// $getDate->click();
-// $getDate->click();
-// $getDate->sendKeys('01');
-// $getDate->click();
-// $getDate->sendKeys('01');
-// $getDate->click();
-// $getDate->sendKeys('1900');
 
 $getFinalSubmit = $driver->findElement(WebDriverBy::xpath('/html/body/main/div/div[1]/div[4]/div[1]/div/div/form/div[11]/div/input'));
 $getFinalSubmit->click();
+
+
+$file = "SICOVAM_".date("Y-m-d").".txt";
+
+$sqlQueryWhere = "SELECT COUNT(*) AS count FROM `Historic` WHERE `date_historic` = '%s' AND `isin` = '%s'";
+$sqlQueryInsert = "INSERT INTO `Historic`(`date_historic`,`opening_price`, `high_price`, `low_price`, `closing_price`, `volume`, `currency`,`isin`) VALUES ('%s', '%s', '%s', '%s', '%s', %d, '%s', '%s')";
+
+if (($handle = fopen($file, "r")) !== FALSE) {
+    fgetcsv($handle, 1000, "\t");
+    
+    while (($data = fgetcsv($handle, 1000, "\t")) !== FALSE) {
+        $label = $data[1];
+        $date = explode("/",$data[2]);
+        $date_historic = $date[2]."-".$date[1]."-".$date[0];
+        $opening_price = str_replace(',', '.', $data[3]);
+        $high_price = str_replace(',', '.', $data[4]);
+        $low_price = str_replace(',', '.', $data[5]);
+        $closing_price = str_replace(',', '.', $data[6]);
+        $volume = (int)$data[7];
+        $currency = $data[8];
+
+        $checkSql = sprintf($sqlQueryWhere, $date_historic, $isin);
+        $result = $mysqlClient->query($checkSql);
+        
+        $count = $result->fetchColumn();
+        if ($count == 0) {
+            $sql = sprintf($sqlQueryInsert, $date_historic, $opening_price, $high_price, $low_price, $closing_price, $volume, $currency, $isin);
+            $result = $mysqlClient->query($sql);
+        }
+        
+        if (!$result) {
+            echo "Error: " . $sql . "<br>" . $conn->error;
+        }
+    }
+}
