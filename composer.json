@@ -1,0 +1,9 @@
+{
+    "require-dev": {
+        "behat/mink": "^1.10"
+    },
+    "require": {
+        "dmore/chrome-mink-driver": "^2.9",
+        "php-webdriver/webdriver": "^1.14"
+    }
+}
