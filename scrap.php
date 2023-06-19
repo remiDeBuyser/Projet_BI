@@ -8,7 +8,7 @@ use Facebook\WebDriver\Chrome\ChromeOptions;
 
 $serverUrl = 'http://localhost:4444';
 
-$scriptDirectory = __DIR__ . "/docs";
+$scriptDirectory = __DIR__;
 
 $options = new ChromeOptions();
 $prefs = array('download.default_directory' => $scriptDirectory);
@@ -61,8 +61,8 @@ print('coucou je suis la');
 $getDownloadsPage = $driver->findElement(WebDriverBy::xpath('/html/body/div[6]/div[3]/div[2]/ol/li[4]/div/div/div[2]/div/ul/li[4]'));
 $getDownloadsPage->click();
 
-// $getInternationalTab = $driver->findElement(WebDriverBy::xpath('/html/body/main/div/div[1]/div[2]/nav/ul/li[2]/a'));
-// $getInternationalTab->click();
+$getInternationalTab = $driver->findElement(WebDriverBy::xpath('/html/body/main/div/div[1]/div[2]/nav/ul/li[2]/a'));
+$getInternationalTab->click();
 
 
 $getCheckBox = $driver->findElement(WebDriverBy::xpath('/html/body/main/div/div[1]/div[4]/div[1]/div/div/form/div[2]/div/ul/li[3]/label'));
@@ -80,6 +80,8 @@ $getIsin->sendKeys('US0378331005');
 $getDate = $driver->findElement(WebDriverBy::xpath('/html/body/main/div/div[1]/div[4]/div[1]/div/div/form/div[6]/div[1]/div/div/input'));
 $getDate->clear();
 $getDate->sendKeys("01011900");
+// $getDate->setAttribute("value", "01/01/1900");
+
 
 // $getDate->click();
 // $getDate->click();
