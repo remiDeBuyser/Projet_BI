@@ -9,10 +9,6 @@ curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);$result = curl_exec($ch);
 $result = str_replace("\n", "", $result);
 curl_close($ch);
 
-// affiche le titre de la page
-preg_match_all("/<title>(.*)<\/title>/", $result, $matches);
-print("<p>".$matches[1][0] . "</p>");
-
 preg_match("/<div class=\"c-faceplate__price \">(.*)<\/div>/", $result, $matches);
 
 // affiche le cours de l'action
