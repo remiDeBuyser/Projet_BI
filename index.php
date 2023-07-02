@@ -19,7 +19,7 @@ function addToDatabase($url, $mysqlClient) {
     preg_match("/<div class=\"c-faceplate__price \">(.*)<\/div>/", $result, $matches);
 
     // recupere l'isin de l'action
-    preg_match("/<span class=\"c-faceplate__isin\">(.*)<\/span>/", $result, $matches2);
+    preg_match("/<h2 class=\"c-faceplate__isin\">(.*)<\/h2>/", $result, $matches2);
     preg_match("/[A-Z]{2}[0-9]{10}/", $matches2[0], $matches2);
     $isin = $matches2[0];
     print("ISIN : ".$isin);
@@ -55,11 +55,12 @@ function addToDatabase($url, $mysqlClient) {
     # requete sql pour ajouter une donnée live
     $actual = date("H:i:s");
     if($actual >= "09:00:00" && $actual <= "17:30:00") {
-        $sqlQuery = 'INSERT INTO `StockDataLive`(`opening_price`, `high_price`, `low_price`, `current_price`, `volume`, `ISIN`) VALUES ('.$open.','.$haut.','.$bas.','.$actual_price.','.$volume.','.$isin.')';
+        $sqlQuery = 'INSERT INTO `StockDataLive`(`opening_price`, `high_price`, `low_price`, `current_price`, `volume`, `ISIN`) VALUES (\''.$open.'\',\''.$haut.'\',\''.$bas.'\',\''.$actual_price.'\',\''.$volume.'\',\''.$isin.'\')';
         $recipesStatement = $mysqlClient->prepare($sqlQuery);
         $recipesStatement->execute();
     } else {
-        $sqlQuery = 'INSERT INTO `StockDataEOD`(`opening_price`, `high_price`, `low_price`, `closing_price`, `volume`, `ISIN`) VALUES ('.$open.','.$haut.','.$bas.','.$actual_price.','.$volume.','.$isin.')';
+        print($open." ".$haut." ".$bas." ".$actual_price." ".$volume." ".$isin);
+        $sqlQuery = 'INSERT INTO `StockDataEOD`(`opening_price`, `high_price`, `low_price`, `current_price`, `volume`, `ISIN`) VALUES (\''.$open.'\',\''.$haut.'\',\''.$bas.'\',\''.$actual_price.'\',\''.$volume.'\',\''.$isin.'\')';
         $recipesStatement = $mysqlClient->prepare($sqlQuery);
         $recipesStatement->execute();
     }
