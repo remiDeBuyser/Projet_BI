@@ -18,6 +18,12 @@ function addToDatabase($url, $mysqlClient) {
 
     preg_match("/<div class=\"c-faceplate__price \">(.*)<\/div>/", $result, $matches);
 
+    // recupere l'isin de l'action
+    preg_match("/<span class=\"c-faceplate__isin\">(.*)<\/span>/", $result, $matches2);
+    preg_match("/[A-Z]{2}[0-9]{10}/", $matches2[0], $matches2);
+    $isin = $matches2[0];
+    print("ISIN : ".$isin);
+
     // affiche le cours de l'action
     preg_match("/[0-9]+\.[0-9]+/", $matches[0], $matches);
     $actual_price = floatval($matches[0]);
@@ -39,16 +45,24 @@ function addToDatabase($url, $mysqlClient) {
     preg_match("/[0-9]+\.[0-9]{4}/", $matches2[0], $matches2);
     $open = floatval($matches2[0]);
 
-    print("<p>Prix actuel : ".$actual_price."$</p>");
+    print("Prix actuel : ".$actual_price."$");
     print("+bas : ".$matches2[0]."<br>");
     print("+haut : ".$matches2[0]."<br>");
     print("total volume : ".$matches2[0]."<br>");
     print("cours open : ".$matches2[0]."<br>");
 
-    
-    $sqlQuery = 'INSERT INTO `StockDataLive`(`opening_price`, `high_price`, `low_price`, `current_price`, `volume`, `id_Action`) VALUES ('.$open.','.$haut.','.$bas.','.$actual_price.','.$volume.',1)';
-    $recipesStatement = $mysqlClient->prepare($sqlQuery);
-    $recipesStatement->execute();
+
+    # requete sql pour ajouter une donnée live
+    $actual = date("H:i:s");
+    if($actual >= "09:00:00" && $actual <= "17:30:00") {
+        $sqlQuery = 'INSERT INTO `StockDataLive`(`opening_price`, `high_price`, `low_price`, `current_price`, `volume`, `ISIN`) VALUES ('.$open.','.$haut.','.$bas.','.$actual_price.','.$volume.','.$isin.')';
+        $recipesStatement = $mysqlClient->prepare($sqlQuery);
+        $recipesStatement->execute();
+    } else {
+        $sqlQuery = 'INSERT INTO `StockDataEOD`(`opening_price`, `high_price`, `low_price`, `closing_price`, `volume`, `ISIN`) VALUES ('.$open.','.$haut.','.$bas.','.$actual_price.','.$volume.','.$isin.')';
+        $recipesStatement = $mysqlClient->prepare($sqlQuery);
+        $recipesStatement->execute();
+    }
 }
 
 addToDatabase($url, $mysqlClient);
